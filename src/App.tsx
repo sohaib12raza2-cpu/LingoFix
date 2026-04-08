@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { processText, ProcessMode } from './lib/gemini';
+import { processText, ProcessMode } from './lib/longcat';
 import { Copy, Check, Loader2, History, Trash2, ArrowRightLeft, SpellCheck, Sparkles, X } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 
