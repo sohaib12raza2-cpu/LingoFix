@@ -121,9 +121,20 @@ export default function App() {
           {/* Input Section */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <label htmlFor="input-text" className="text-sm font-medium text-zinc-700">
-                Original Text
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="input-text" className="text-sm font-medium text-zinc-700">
+                  Original Text
+                </label>
+                {input && (
+                  <button
+                    onClick={() => setInput('')}
+                    className="text-zinc-500 hover:text-zinc-900 flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded hover:bg-zinc-100 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Clear All
+                  </button>
+                )}
+              </div>
               <textarea
                 id="input-text"
                 value={input}
@@ -182,13 +193,22 @@ export default function App() {
                 Result
               </label>
               {output && (
-                <button
-                  onClick={() => copyToClipboard(output)}
-                  className="text-zinc-500 hover:text-zinc-900 flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded hover:bg-zinc-100 transition-colors"
-                >
-                  {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                  {isCopied ? 'Copied' : 'Copy'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setOutput('')}
+                    className="text-zinc-500 hover:text-zinc-900 flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded hover:bg-zinc-100 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Clear All
+                  </button>
+                  <button
+                    onClick={() => copyToClipboard(output)}
+                    className="text-zinc-500 hover:text-zinc-900 flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded hover:bg-zinc-100 transition-colors"
+                  >
+                    {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {isCopied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
               )}
             </div>
             <div className={`w-full h-64 p-4 rounded-xl border ${output ? 'bg-white border-zinc-200 shadow-sm' : 'bg-zinc-100/50 border-dashed border-zinc-200'} overflow-y-auto relative`}>

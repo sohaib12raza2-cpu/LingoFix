@@ -33,7 +33,7 @@ export default async function handler(req: any, res: any) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'LongCat-Flash-Chat',
+                model: 'LongCat-2.0-Preview',
                 messages: [
                     {
                         role: 'system',
@@ -45,19 +45,37 @@ export default async function handler(req: any, res: any) {
                     }
                 ],
                 stream: false,
-                temperature: 0.3
+                max_tokens: 4000,
+                temperature: 0.7
             })
         });
 
         if (!response.ok) {
+            let errorMessage = `LongCat API error: ${response.status}`;
             const errorData = await response.json().catch(() => null);
-            throw new Error(errorData?.error?.message || `API error: ${response.status}`);
+            
+            if (response.status === 400) {
+                errorMessage = 'Invalid request parameters sent to LongCat API.';
+            } else if (response.status === 401) {
+                errorMessage = 'Invalid or missing LongCat API key. Please check your server configuration.';
+            } else if (response.status === 403) {
+                errorMessage = 'Insufficient quota or permissions for LongCat API.';
+            } else if (response.status === 429) {
+                errorMessage = 'Rate limit exceeded or insufficient tokens for LongCat API. Please try again later.';
+            } else if (response.status >= 500) {
+                errorMessage = 'LongCat server encountered an issue. Please try again later.';
+            } else if (errorData?.error?.message) {
+                errorMessage = errorData.error.message;
+            }
+            
+            console.error('[LongCat Error]', response.status, errorData);
+            return res.status(response.status).json({ error: errorMessage });
         }
 
         const data = await response.json();
         return res.status(200).json(data);
     } catch (error: any) {
         console.error('API Error:', error);
-        return res.status(500).json({ error: error.message || 'Internal Server Error' });
+        return res.status(500).json({ error: 'Internal Server Error connecting to LongCat' });
     }
 }
