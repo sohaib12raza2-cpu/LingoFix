@@ -6,7 +6,7 @@ async function test() {
     const req = {
         method: 'POST',
         body: {
-            text: 'Say hello in one sentence.',
+            text: 'Hello, please introduce yourself.',
             mode: 'translate'
         }
     };

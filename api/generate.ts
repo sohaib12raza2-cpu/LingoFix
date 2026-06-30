@@ -33,7 +33,7 @@ export default async function handler(req: any, res: any) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'LongCat-2.0-Preview',
+                model: 'LongCat-2.0',
                 messages: [
                     {
                         role: 'system',
@@ -45,7 +45,7 @@ export default async function handler(req: any, res: any) {
                     }
                 ],
                 stream: false,
-                max_tokens: 4000,
+                max_tokens: 2000,
                 temperature: 0.7
             })
         });
@@ -54,14 +54,15 @@ export default async function handler(req: any, res: any) {
             let errorMessage = `LongCat API error: ${response.status}`;
             const errorData = await response.json().catch(() => null);
             
+            // Handle specific status codes with custom messages
             if (response.status === 400) {
                 errorMessage = 'Invalid request parameters sent to LongCat API.';
             } else if (response.status === 401) {
                 errorMessage = 'Invalid or missing LongCat API key. Please check your server configuration.';
-            } else if (response.status === 403) {
-                errorMessage = 'Insufficient quota or permissions for LongCat API.';
+            } else if (response.status === 403 || errorData?.error?.code === 'insufficient_quota') {
+                errorMessage = 'LongCat balance is insufficient. Please top up your LongCat API account.';
             } else if (response.status === 429) {
-                errorMessage = 'Rate limit exceeded or insufficient tokens for LongCat API. Please try again later.';
+                errorMessage = 'LongCat rate limit reached. Please try again after some time.';
             } else if (response.status >= 500) {
                 errorMessage = 'LongCat server encountered an issue. Please try again later.';
             } else if (errorData?.error?.message) {
